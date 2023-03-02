@@ -12,7 +12,7 @@ const Contact = () => {
                     style={{
                         fontStyle: 'italic',
                         fontFamily: 'cursive'
-                    }}>Follow Me On</h1>
+                    }}>Contact Me On</h1>
                 <Row className="d-flex justify-content-center align-items-center">
                     <Col md={10}>
                         <Card
