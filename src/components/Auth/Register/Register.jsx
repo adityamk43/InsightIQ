@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import './Register.css';
-import BASE_URL from '../../api/env';
+import BASE_URL from '../../../api/env';
 import axios from "axios";
 import { toast } from "react-toastify";
+import Cookies from 'js-cookie';
 
 const Register = () => {
 
     const [formData, setFormData] = useState({email: '', name: '', password: '', password2: ''})
+    const navigate = useNavigate();
 
     const handleOnChange = (e) => {
         const {name, value} = e.target;
@@ -21,6 +23,31 @@ const Register = () => {
         await axios.post(`${BASE_URL}/user/register/`, formData)
         .then(response => {
             console.log(response.data);
+            const token = response.data.token
+            const access_token = token.access;
+            const refresh_token = token.refresh;
+            
+            if (!token) {
+                toast.error("Unable to Register. Please try after some time.", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                return;
+            }
+
+            Cookies.set('accessToken', access_token);
+            Cookies.set('refreshToken', refresh_token);
+
+            setTimeout(() => {
+                navigate('/insight-iq');
+            }, 500);
+
             toast.success("User Registered Successfully!!", {
                 position: "top-right",
                 autoClose: 5000,
@@ -31,6 +58,7 @@ const Register = () => {
                 progress: undefined,
                 theme: "dark",
             });
+
         })
         .catch(errors => {
             const errorData=errors.response.data.errors.email[0]
@@ -95,7 +123,7 @@ const Register = () => {
                                 <CardTitle tag="h2" className="text-center">
                                     Register Here
                                     <br />
-                                    <Button color="link" className="fst-italic"><Link to="/login">(Existing User? Login here)</Link></Button>
+                                    <Button color="link" className="fst-italic"><Link to="/auth/login">(Existing User? Login here)</Link></Button>
                                 </CardTitle>
                                 <CardText tag={"div"} className="px-md-5 pt-1">
                                         <Form onSubmit={onSubmitHandler}>

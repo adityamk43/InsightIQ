@@ -1,4 +1,4 @@
-import { faArrowDown, faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faBars, faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
@@ -6,7 +6,11 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { toast } from "react-toastify";
 import { Button, Card, CardText, Col, Container, Form, Input, InputGroup, InputGroupText, Row } from "reactstrap";
 import BASE_URL from "../../api/env";
+import Cookies from "js-cookie";
 import "./InsightIQ.css";
+import UserDashboard from "./UserDashboard";
+import { useNavigate } from "react-router-dom";
+import OffcanvasDashboard from "./OffcanvasDashboard";
 
 const InsightIQ = () => {
 
@@ -19,10 +23,50 @@ const InsightIQ = () => {
     const [remHeight, setRemHeight] = useState(0);
     const [visible, setVisible] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
+    const checkUserToken = () => {
+        const accessToken = Cookies.get('accessToken');
+        if (!accessToken || accessToken === 'undefined') {
+            setIsLoggedIn(false);
+        }
+        setIsLoggedIn(true);
+    }
+    useEffect(() => {
+        checkUserToken();
+    }, [isLoggedIn]);
+
+    const logout = () => {
+
+        setTimeout(() => {
+            Cookies.remove('accessToken');
+            Cookies.remove('refreshToken');
+            toast.success('Logout Successful', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+
+            navigate('/auth/login');
+        }, 500)
+
+    }
 
     const getAllQA = async () => {
-        await axios.get(`${BASE_URL}/v1/answer/`)
+        const accessToken = Cookies.get('accessToken');
+        await axios.get(`${BASE_URL}/v1/answer/`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        })
             .then(response => {
                 console.log("QA-List: " + response.data);
                 setQAList(response.data);
@@ -34,13 +78,18 @@ const InsightIQ = () => {
 
     const deleteAllQA = async () => {
 
-        await axios.delete(`${BASE_URL}/v1/answer/`)
-        .then(response => {
-            console.log(response.data);
+        const accessToken = Cookies.get('accessToken');
+        await axios.delete(`${BASE_URL}/v1/answer/`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
         })
-        .catch(error => {
-            console.log(error);
-        })
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
 
     const questionSubmitHandler = async (e) => {
@@ -62,7 +111,12 @@ const InsightIQ = () => {
         }
         // console.log(question);
         //backend api to be given here!! for now this is hardcoded
-        await axios.post(`${BASE_URL}/v1/answer/`, { question: question })
+        const accessToken = Cookies.get('accessToken');
+        await axios.post(`${BASE_URL}/v1/answer/`, { question: question }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        })
             .then(response => {
                 console.log(response.data);
                 //To debug and test working in front-end only, use these commented variables!!
@@ -171,6 +225,17 @@ const InsightIQ = () => {
         });
     };
 
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleResize = () => {
+        const width = window.innerWidth;
+        setIsMobile(width <= 576);
+    };
+
+    window.addEventListener("resize", handleResize);
+
     const QAViewWindow = ({ remHeight }) => (
         <Container fluid className="background1 text-white"
             style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto' }}>
@@ -261,51 +326,116 @@ const InsightIQ = () => {
                 Are you sure you want to delete all your conversations?
             </SweetAlert>
 
-
             {
-                qaList.length === 0 ?
-
-                    <QAViewWindow remHeight={remHeight} />
-
-                    :
-
-                    (<div ref={listRef} id="qa" className="background1 text-white pt-4"
-                        style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto', scrollBehavior: 'smooth' }}>
-
-                        {qaList.map((qa) => <div key={qa.q_id}> <p className="background3 p-4 mx-4 questionDiv">Q: {qa.question}</p> <p className="background2 p-4 mx-4 fst-italic answerDiv">A: {qa.answer}</p></div>)}
-                        <Button color="primary" className="scrollDownBtn" onClick={scrollToBottom}
-                            style={{ display: visible ? 'inline' : 'none' }}>
-                            <FontAwesomeIcon icon={faArrowDown} />
+                isMobile ? (
+                    <>
+                        <Button onClick={handleToggle} className="offcanvasToggleBtn">
+                            <FontAwesomeIcon icon={faBars}/>
                         </Button>
-                    </div>)
+
+                        <OffcanvasDashboard className="Dashboardbackground" isOpen={isOpen} toggle={handleToggle} logout={logout} />
+
+                        {
+                            qaList.length === 0 ?
+
+                                <QAViewWindow remHeight={remHeight} />
+
+                                :
+
+                                (<div ref={listRef} id="qa" className="background1 text-white pt-4"
+                                    style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto', scrollBehavior: 'smooth' }}>
+
+                                    {qaList.map((qa) => <div key={qa.q_id}> <p className="background3 p-4 mx-4 questionDiv">Q: {qa.question}</p> <p className="background2 p-4 mx-4 fst-italic answerDiv">A: {qa.answer}</p></div>)}
+                                    <Button color="primary" className="scrollDownBtn" onClick={scrollToBottom}
+                                        style={{ display: visible ? 'inline' : 'none' }}>
+                                        <FontAwesomeIcon icon={faArrowDown} />
+                                    </Button>
+                                </div>)
+                        }
+
+                        <div ref={formRef} className="p-3 background1">
+                            <Form onSubmit={questionSubmitHandler}>
+                                <Container>
+
+                                    <InputGroup>
+                                        <Input
+                                            autoComplete="off"
+                                            id="question"
+                                            name="question"
+                                            className="background2 QuestionInput"
+                                            placeholder="Have a Question? Type Here!!"
+                                            value={question}
+                                            onChange={event => setQuestion(event.target.value)}
+                                        />
+                                        <InputGroupText className="background2 QuestionInput">
+                                            <Button color="primary" type="submit" className="sendBtn"><FontAwesomeIcon icon={faPaperPlane} /></Button>
+                                        </InputGroupText>
+
+                                        <InputGroupText className="background1">
+                                            <Button color="primary" type="reset" className="dltBtn" onClick={handleShowAlert}><FontAwesomeIcon icon={faTrash} /></Button>
+                                        </InputGroupText>
+                                    </InputGroup>
+                                </Container>
+
+                            </Form>
+                        </div>
+                    </>
+                ) :
+                    (
+                        <Row>
+                            <Col lg={3} md={4} sm={4} className="Dashboardbackground">
+                                <UserDashboard logout={logout} />
+                            </Col>
+                            <Col lg={9} md={8} sm={8} className="background1">
+                                {
+                                    qaList.length === 0 ?
+
+                                        <QAViewWindow remHeight={remHeight} />
+
+                                        :
+
+                                        (<div ref={listRef} id="qa" className="background1 text-white pt-4"
+                                            style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto', scrollBehavior: 'smooth' }}>
+
+                                            {qaList.map((qa) => <div key={qa.q_id}> <p className="background3 p-4 mx-4 questionDiv">Q: {qa.question}</p> <p className="background2 p-4 mx-4 fst-italic answerDiv">A: {qa.answer}</p></div>)}
+                                            <Button color="primary" className="scrollDownBtn" onClick={scrollToBottom}
+                                                style={{ display: visible ? 'inline' : 'none' }}>
+                                                <FontAwesomeIcon icon={faArrowDown} />
+                                            </Button>
+                                        </div>)
+                                }
+
+                                <div ref={formRef} className="p-3 background1">
+                                    <Form onSubmit={questionSubmitHandler}>
+                                        <Container>
+
+                                            <InputGroup>
+                                                <Input
+                                                    autoComplete="off"
+                                                    id="question"
+                                                    name="question"
+                                                    className="background2 QuestionInput"
+                                                    placeholder="Have a Question? Type Here!!"
+                                                    value={question}
+                                                    onChange={event => setQuestion(event.target.value)}
+                                                />
+                                                <InputGroupText className="background2 QuestionInput">
+                                                    <Button color="primary" type="submit" className="sendBtn"><FontAwesomeIcon icon={faPaperPlane} /></Button>
+                                                </InputGroupText>
+
+                                                <InputGroupText className="background1">
+                                                    <Button color="primary" type="reset" className="dltBtn" onClick={handleShowAlert}><FontAwesomeIcon icon={faTrash} /></Button>
+                                                </InputGroupText>
+                                            </InputGroup>
+                                        </Container>
+
+                                    </Form>
+                                </div>
+                            </Col>
+                        </Row>
+                    )
             }
 
-            <div ref={formRef} className="p-3 background1">
-                <Form onSubmit={questionSubmitHandler}>
-                    <Container>
-
-                        <InputGroup>
-                            <Input
-                                autoComplete="off"
-                                id="question"
-                                name="question"
-                                className="background2 QuestionInput"
-                                placeholder="Have a Question? Type Here!!"
-                                value={question}
-                                onChange={event => setQuestion(event.target.value)}
-                            />
-                            <InputGroupText className="background2 QuestionInput">
-                                <Button color="primary" type="submit" className="sendBtn"><FontAwesomeIcon icon={faPaperPlane} /></Button>
-                            </InputGroupText>
-
-                            <InputGroupText className="background1">
-                                <Button color="primary" type="reset" className="dltBtn" onClick={handleShowAlert}><FontAwesomeIcon icon={faTrash} /></Button>
-                            </InputGroupText>
-                        </InputGroup>
-                    </Container>
-
-                </Form>
-            </div>
 
         </>
     );

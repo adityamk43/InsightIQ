@@ -1,0 +1,11 @@
+.DashboardListColor
+{
+    background-color: #202123 !important;
+    color: white !important;
+}
+
+.DashboardListColor:hover
+{
+    background-color: #434548 !important;
+    cursor: pointer;
+}

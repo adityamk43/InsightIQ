@@ -6,8 +6,10 @@ import InsightIQ from './components/InsightIQ/InsightIQ';
 import { ToastContainer } from 'react-toastify';
 import Contact from './components/Contact/Contact';
 import About from './components/About/About';
-import Register from './components/Register/Register';
-import Login from './components/Login/Login';
+import Register from './components/Auth/Register/Register';
+import Login from './components/Auth/Login/Login';
+import Auth from './components/Auth/Auth';
+import ProtectedRoute from './components/Util/ProtectedRoute';
 
 function App() {
   return (
@@ -15,14 +17,22 @@ function App() {
       <Router>
         <MyNavbar />
         <Routes>
+          <Route path='/auth' element={<Auth />}>
+            <Route path='login' element={<Login />} />
+            <Route path='register' element={<Register />} />
+          </Route>
           <Route exact path='/' element={<Home />} />
-          <Route exact path='/insight-iq' element={<InsightIQ />} />
           <Route exact path='/contact' element={<Contact />} />
           <Route exact path='/about' element={<About />} />
-          <Route exact path='/register' element={ <Register/>} />
-          <Route exact path='/login' element={ <Login/>} />
+
+
+          <Route path='/insight-iq' element={
+            <ProtectedRoute>
+              <InsightIQ />
+            </ProtectedRoute>
+          } />
         </Routes>
-      </Router>     
+      </Router>
       <ToastContainer />
     </>
   );

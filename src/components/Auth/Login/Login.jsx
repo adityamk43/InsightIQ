@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import './Login.css';
 import axios from "axios";
 import { toast } from "react-toastify";
-import BASE_URL from "../../api/env";
+import BASE_URL from "../../../api/env";
+import Cookies from 'js-cookie';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' })
+    const navigate=useNavigate();
 
     const handleOnChange = (e) => {
         const { name, value } = e.target;
@@ -20,6 +22,31 @@ const Login = () => {
         await axios.post(`${BASE_URL}/user/login/`, formData)
         .then(response => {
             console.log(response.data);
+            const token = response.data.token
+            const access_token = token.access;
+            const refresh_token = token.refresh;
+            
+            if (!token) {
+                toast.error("Unable to Login. Please try after some time.", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                return;
+            }
+
+            Cookies.set('accessToken', access_token);
+            Cookies.set('refreshToken', refresh_token);
+
+            setTimeout(() => {
+                navigate('/insight-iq');
+            }, 500);
+
             toast.success("Login Successful!!", {
                 position: "top-right",
                 autoClose: 5000,
@@ -30,6 +57,7 @@ const Login = () => {
                 progress: undefined,
                 theme: "dark",
             });
+
         })
         .catch(errors => {
             const errorData=errors.response.data.errors.non_field_errors[0]
@@ -82,7 +110,7 @@ const Login = () => {
                                 <CardTitle tag="h2" className="text-center">
                                     Login Here
                                     <br />
-                                    <Button color="link" className="fst-italic"><Link to="/register">(New User? Singup here)</Link></Button>
+                                    <Button color="link" className="fst-italic"><Link to="/auth/register">(New User? Singup here)</Link></Button>
                                 </CardTitle>
                                 <CardText tag={"div"} className="px-md-5 pt-1">
                                     <Form onSubmit={onSubmitHandler}>

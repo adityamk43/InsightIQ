@@ -83,22 +83,13 @@ const MyNavbar = () => {
                             Try Insight IQ!
                         </Link>
                         <Link
-                            to="/register"
+                            to="/auth/register"
                             className={`border-0 rounded-0
-                            ${activePath === '/register' ? 'active' : ''} 
+                            ${activePath === '/auth/register' ? 'active' : ''} 
                             text-white my-3 my-list-item list-group-item list-group-item-action`}
                             style={{ backgroundColor: 'black' }}
                         >
                             Register
-                        </Link>
-                        <Link
-                            to="/login"
-                            className={`border-0 rounded-0
-                            ${activePath === '/login' ? 'active' : ''} 
-                            text-white my-3 my-list-item list-group-item list-group-item-action`}
-                            style={{ backgroundColor: 'black' }}
-                        >
-                            Login
                         </Link>
                         <Link
                             to="/about"
