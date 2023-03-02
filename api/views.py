@@ -3,6 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import QA
 from .serializers import QASerializer
+from account.renderers import UserRenderer
+from rest_framework.permissions import IsAuthenticated
+
 import openai
 openai.api_key = "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"
 
@@ -13,9 +16,11 @@ openai.api_key = "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"
 
 class generateAnswerView(APIView):
     serializer_class = QASerializer
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        qas = QA.objects.all()
+        qas = QA.objects.filter(user=request.user)
         serializer = self.serializer_class(qas, many=True)
         # data = [{"q_id": qa.id, "question": qa.question, "answer": qa.answer} for qa in qas]
         return Response(serializer.data)
@@ -24,6 +29,8 @@ class generateAnswerView(APIView):
         '''
         Note that the request.data attribute is a dictionary-like object that contains the parsed request data. To avoid raising a KeyError if the "question" key is missing from the request data, you can use the .get() method instead of indexing the dictionary directly. This will return None if the key is not found, which will cause the if statement to evaluate to False and return a response indicating that the question should not be blank.
         '''
+        # Get the user id from the request
+        user_id = request.user.id
         # question = request.data["question"]
         question = request.data.get("question")
 
@@ -51,7 +58,8 @@ class generateAnswerView(APIView):
             # qa.save()
             data = {
                 'question': question,
-                'answer': answer
+                'answer': answer,
+                'user_id': user_id
             }
             serializer = self.serializer_class(data=data)
             serializer.is_valid(raise_exception=True)
@@ -63,7 +71,7 @@ class generateAnswerView(APIView):
         return Response(self.serializer_class(qa).data)
 
     def delete(self, request):
-        qas = QA.objects.all()
+        qas = QA.objects.filter(user=request.user)
         '''
         Note that the _ variable in the tuple assignment is used to discard the dictionary containing the count of deleted objects for each model. This is because we are only interested in the count of deleted QA objects, and not the count of deleted objects for other models that may be related to QA.
         
