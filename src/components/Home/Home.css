@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital@0;1&family=Sansita+Swashed&family=Smooch+Sans:wght@200&display=swap');
+
+/* .text-bold {
+    animation: typing 3s steps(10, end);
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+.typewriter-cursor {
+    border-right: 0.08em solid white;
+    animation: blink 0.7s infinite;
+} */
+
+/* @keyframes blink {
+
+    from,
+    to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: white;
+    }
+} */
+
+.fonts {
+    font-family: 'Merriweather', serif;
+    font-family: 'Sansita Swashed', cursive;
+    font-family: 'Smooch Sans', sans-serif;
+}
+
+.fonts h1 {
+    font-weight: 100;
+    font-size: 5rem;
+}
+
+.fonts p {
+
+    font-size: 2rem;
+    font-style: italic;
+}

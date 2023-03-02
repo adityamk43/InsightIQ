@@ -1,0 +1,32 @@
+.background
+{
+    background-color: darkcyan;
+    min-height: 95vh;
+}
+
+.backgroundForm
+{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3) !important;
+    color: white !important;
+    background-color: #343541 !important;
+}
+
+.submitBtn
+{
+    background-color: darkcyan !important;
+    color: white !important;
+    border-color: darkcyan !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+.submitBtn:hover
+{
+    background-color: rgb(8, 88, 88) !important;
+    border-color: rgb(8, 88, 88) !important;
+}
+
+.submitBtn:active
+{
+    background-color: rgb(36, 122, 122) !important;
+    border-color: rgb(36, 122, 122) !important;
+}

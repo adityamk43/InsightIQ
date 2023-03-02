@@ -1,0 +1,88 @@
+.background1 {
+    background-color: #343541 !important;
+}
+
+.background2 {
+    background-color: #40414F !important;
+}
+
+.background3 {
+    background-color: darkcyan !important;
+}
+
+.QuestionInput {
+    border-color: #40414F !important;
+    caret-color: white;
+    color: white !important;
+}
+
+.QuestionInput:focus {
+    background-color: #40414F !important;
+    border-color: #40414F !important;
+    box-shadow: none !important;
+}
+
+.sendBtn {
+    background-color: #40414F !important;
+    border-color: #40414F !important;
+}
+
+.sendBtn:hover {
+    border-color: #343541 !important;
+    background-color: #343541 !important;
+}
+
+.dltBtn {
+    background-color: #343541 !important;
+    border-color: #343541 !important;
+}
+
+.DltSure .sweetalert {
+    background-color: black !important;
+}
+
+.scrollDownBtn {
+    position: absolute;
+    bottom: 100px;
+    right: 40px;
+    border-radius: 50% !important;
+    box-shadow: 0 0 10 10;
+    background-color: darkcyan !important;
+    border: none !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.scrollDownBtn:hover {
+    background-color: darkturquoise !important;
+    border: cyan !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#qa::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+#qa::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+/* Handle */
+#qa::-webkit-scrollbar-thumb {
+    background: #565869;
+    border-radius: 10px;
+}
+
+#qa::-webkit-scrollbar-thumb:hover {
+    background-color: #ACACBE;
+}
+
+.questionDiv {
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+.answerDiv {
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}

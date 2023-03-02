@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital@0;1&display=swap');
+
+.my-list-item:hover {
+    background-color: darkcyan !important;
+}
+
+.active
+{
+    background-color: darkcyan !important;
+}
+
+.title-font
+{
+    font-family: 'Merriweather', serif;
+    font-style: italic;
+}
