@@ -7,7 +7,9 @@ from account.renderers import UserRenderer
 from rest_framework.permissions import IsAuthenticated
 
 import openai
-openai.api_key = "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"
+import os
+
+openai.api_key = os.environ.get("OPEN_AI_API_KEY")
 
 # Create your views here.
 
