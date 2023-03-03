@@ -106,7 +106,7 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
                 'to_email': user.email
             }
 
-            # Util.send_email(data)
+            Util.send_email(data)
 
             return attrs
         else:

@@ -109,6 +109,23 @@ class UserPasswordResetView(APIView):
 
         if serializer.is_valid(raise_exception=True):
             return Response({'msg': 'Password Reset Successfully'}, status=status.HTTP_200_OK)
-        
+
         # in case if raise_exception=True doesn't work then this will return as error
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# From my understanding from internet, I have learned that tokens can't be destroyed between the lifespan of token creation(signed) and token expiration. Only Refresh Token can be blacklisted so that it cannot generate new access token, so hence this function is deprecated since, it made no sense to blaclist refresh token since, we are not using refresh token and only using access token in this project!!
+# class LogoutAPIView(APIView):
+#     renderer_classes=[UserRenderer]
+
+#     def post(self, request):
+#         try:
+#             refresh_token = request.data["refresh_token"]
+#             access_token = request.data["access_token"]
+
+#             # RefreshToken(access_token).blacklist()
+#             RefreshToken(refresh_token).blacklist()
+
+#             return Response({"msg": "Logout Done Successfully!"}, status=status.HTTP_205_RESET_CONTENT)
+#         except Exception as e:
+#             return Response({"msg": str(e)}, status=status.HTTP_400_BAD_REQUEST)

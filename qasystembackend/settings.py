@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'api',
     'account',
     'corsheaders',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -150,7 +151,7 @@ REST_FRAMEWORK = {
 
 # JWT Settings
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=25),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -170,7 +171,7 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'account.User'
 
-PASSWORD_RESET_TIMEOUT=900 #900 sec = 15 min
+PASSWORD_RESET_TIMEOUT = 900  # 900 sec = 15 min
 
 # Send Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
