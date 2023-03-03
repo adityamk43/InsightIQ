@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card, CardBody, CardText, Col, Container, Row } from "reactstrap";
 import Footer from "../Footer/Footer";
+import MyNavbar from "../Navbar/Navbar";
 
 const Contact = () => {
     return (
         <>
+            <MyNavbar/>
             <Container style={{ minHeight: '66.5vh' }} >
                 <h1 className="text-center pt-5 pb-4 px-5"
                     style={{
@@ -22,7 +24,7 @@ const Contact = () => {
                             }}
                         >
                             <CardBody>
-                                <CardText>
+                                <CardText tag={'div'}>
                                     <ul className="nav justify-content-center list-unstyled d-flex">
                                         <li className="mx-5"><a href="https://twitter.com/AdityaB55261776?t=oy7wcdP5YqbPn_35TK6K5A&s=08" target={"_blank"} rel="noopener noreferrer" className="text-white" ><FontAwesomeIcon icon={faTwitter} size="4x" style={{ color: "#1DA1F2" }} beatFade /></a></li>
 

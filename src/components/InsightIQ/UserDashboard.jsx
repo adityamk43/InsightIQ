@@ -6,8 +6,9 @@ import axios from "axios";
 import './UserDashboard.css';
 import Cookies from 'js-cookie'
 import BASE_URL from "../../api/env";
+import { Link } from "react-router-dom";
 
-const UserDashboard = ({logout}) => {
+const UserDashboard = ({ showLogoutAlert, setIsCookieExpired }) => {
     const [userData, setUserData] = useState({ id: "", email: "", name: "" })
 
     const getUserData = async () => {
@@ -19,7 +20,7 @@ const UserDashboard = ({logout}) => {
             },
         })
             .then(response => {
-                console.log(response.data);
+                // console.log(response.data);
                 setUserData(response.data);
             })
             .catch(errors => {
@@ -28,7 +29,15 @@ const UserDashboard = ({logout}) => {
     }
 
     useEffect(() => {
-        getUserData();
+
+        if (Cookies.get('accessToken')==null && Cookies.get('refreshToken')==null)
+        {
+            setIsCookieExpired(true);
+        }
+        else
+            getUserData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
@@ -41,10 +50,10 @@ const UserDashboard = ({logout}) => {
                 <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor'>
                     <FontAwesomeIcon icon={faUser} />&nbsp;&nbsp; {userData.name}
                 </ListGroupItem>
-                <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor'>
+                <Link to={"/insight-iq/change-password"} className='border-0 rounded-0 text-white my-3 list-group-item list-group-item-action DashboardListColor'>
                     <FontAwesomeIcon icon={faUserLock} />&nbsp;&nbsp;ChangePassword
-                </ListGroupItem>
-                <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={logout}>
+                </Link>
+                <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={showLogoutAlert}>
                     <FontAwesomeIcon icon={faArrowRightFromBracket} />&nbsp;&nbsp;Logout
                 </ListGroupItem>
             </ListGroup>

@@ -1,14 +1,14 @@
-import { faArrowRightFromBracket, faEnvelope, faUser, faUserLock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faEnvelope, faTimes, faUser, faUserLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
-import { RxCross1 } from "react-icons/rx";
+import { Link } from "react-router-dom";
 import { ListGroup, ListGroupItem, Offcanvas, OffcanvasBody } from "reactstrap";
 import BASE_URL from "../../api/env";
 import './UserDashboard.css';
 
-const OffcanvasDashboard = ({ className, isOpen, toggle, logout }) => {
+const OffcanvasDashboard = ({ className, isOpen, toggle, showLogoutAlert, setIsCookieExpired }) => {
 
     const [userData, setUserData] = useState({ id: "", email: "", name: "" })
 
@@ -21,7 +21,7 @@ const OffcanvasDashboard = ({ className, isOpen, toggle, logout }) => {
             },
         })
             .then(response => {
-                console.log(response.data);
+                // console.log(response.data);
                 setUserData(response.data);
             })
             .catch(errors => {
@@ -30,7 +30,14 @@ const OffcanvasDashboard = ({ className, isOpen, toggle, logout }) => {
     }
 
     useEffect(() => {
-        getUserData();
+
+        if (Cookies.get('accessToken') == null && Cookies.get('refreshToken') == null) {
+            setIsCookieExpired(true);
+        }
+        else
+            getUserData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
@@ -41,7 +48,7 @@ const OffcanvasDashboard = ({ className, isOpen, toggle, logout }) => {
                 <OffcanvasBody>
                     <div>
                         <div className="text-end" onClick={toggle} style={{ cursor: 'pointer' }}>
-                            <RxCross1 />
+                            <FontAwesomeIcon icon={faTimes} className="text-white" size="lg" />
                         </div>
                         <h4 className="text-center pt-5">Welcome {userData.name}</h4>
                         <ListGroup flush className="mt-5">
@@ -51,10 +58,10 @@ const OffcanvasDashboard = ({ className, isOpen, toggle, logout }) => {
                             <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor'>
                                 <FontAwesomeIcon icon={faUser} />&nbsp;&nbsp; {userData.name}
                             </ListGroupItem>
-                            <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor'>
+                            <Link to={"/insight-iq/change-password"} className='border-0 rounded-0 text-white my-3 list-group-item list-group-item-action DashboardListColor'>
                                 <FontAwesomeIcon icon={faUserLock} />&nbsp;&nbsp;ChangePassword
-                            </ListGroupItem>
-                            <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={logout}>
+                            </Link>
+                            <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={showLogoutAlert}>
                                 <FontAwesomeIcon icon={faArrowRightFromBracket} />&nbsp;&nbsp;Logout
                             </ListGroupItem>
                         </ListGroup>

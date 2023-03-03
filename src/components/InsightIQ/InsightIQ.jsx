@@ -1,16 +1,20 @@
-import { faArrowDown, faBars, faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { toast } from "react-toastify";
-import { Button, Card, CardText, Col, Container, Form, Input, InputGroup, InputGroupText, Row } from "reactstrap";
+import { Button, Col, Container, Row } from "reactstrap";
 import BASE_URL from "../../api/env";
 import Cookies from "js-cookie";
 import "./InsightIQ.css";
 import UserDashboard from "./UserDashboard";
 import { useNavigate } from "react-router-dom";
 import OffcanvasDashboard from "./OffcanvasDashboard";
+import QAList from "./QAList";
+import QAViewWindow from "./QAViewWindow";
+import QuestionForm from "./QuestionForm";
+import MyNavbar from "../Navbar/Navbar";
 
 const InsightIQ = () => {
 
@@ -21,11 +25,14 @@ const InsightIQ = () => {
     const listRef = useRef(null);
     const formRef = useRef(null);
     const [remHeight, setRemHeight] = useState(0);
+    const [navHeight, setNavHeight] = useState(0);
     const [visible, setVisible] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
+    const [showLogoutAlert, setShowLogoutAlert] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [isCookieExpired, setIsCookieExpired] = useState(false);
     const navigate = useNavigate();
 
     const checkUserToken = () => {
@@ -38,6 +45,25 @@ const InsightIQ = () => {
     useEffect(() => {
         checkUserToken();
     }, [isLoggedIn]);
+
+    useEffect(()=>{
+
+        if (isCookieExpired===true)
+        {
+            toast.error('Session Expired!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            navigate('/auth/login');
+        }
+
+    }, [isCookieExpired, navigate])
 
     const logout = () => {
 
@@ -68,7 +94,7 @@ const InsightIQ = () => {
             },
         })
             .then(response => {
-                console.log("QA-List: " + response.data);
+                // console.log("QA-List: " + response.data);
                 setQAList(response.data);
             })
             .catch(error => {
@@ -86,9 +112,34 @@ const InsightIQ = () => {
         })
             .then(response => {
                 console.log(response.data);
+                toast.success('Conversation has been deleted successfully!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
             })
             .catch(error => {
                 console.log(error);
+                if (error.response.status === 401) {
+                    Cookies.remove('accessToken');
+                    Cookies.remove('refreshToken');
+                    toast.error('Session Expired!', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
+                    navigate('/auth/login');
+                }
             })
     }
 
@@ -133,6 +184,21 @@ const InsightIQ = () => {
             })
             .catch(error => {
                 console.log(error);
+                if (error.response.status === 401) {
+                    Cookies.remove('accessToken');
+                    Cookies.remove('refreshToken');
+                    toast.error('Session Expired!', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
+                    navigate('/auth/login');
+                }
             });
     }
 
@@ -150,17 +216,6 @@ const InsightIQ = () => {
             setQAList([]);
 
             deleteAllQA();
-
-            toast.success('Conversation has been deleted successfully!', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
         }
         else {
             toast.warn('No Conversation exists!', {
@@ -179,6 +234,26 @@ const InsightIQ = () => {
     };
 
 
+    const handleLogoutShowAlert = () => {
+        setShowLogoutAlert(true);
+    };
+
+    const handleLogoutHideAlert = () => {
+        setShowLogoutAlert(false);
+    };
+
+    const handleLogoutConfirmAlert = () => {
+
+        logout();
+        setShowLogoutAlert(false);
+    };
+
+
+
+    const onChangeInputHandler = (event) => {
+        setQuestion(event.target.value);
+    }
+
     useEffect(() => {
         // Set body overflow to hidden when the component mounts
         if (formRef.current) {
@@ -186,7 +261,10 @@ const InsightIQ = () => {
             // console.log(formRef.current.clientHeight);
         }
         document.body.style.overflow = 'hidden';
+
         getAllQA();
+
+
         return () => {
             // Reset body overflow when the component unmounts
             document.body.style.overflow = 'auto';
@@ -234,81 +312,67 @@ const InsightIQ = () => {
         setIsMobile(width <= 576);
     };
 
-    window.addEventListener("resize", handleResize);
+    useLayoutEffect(() => {
+        const width = window.innerWidth;
+        setIsMobile(width <= 576);
 
-    const QAViewWindow = ({ remHeight }) => (
-        <Container fluid className="background1 text-white"
-            style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto' }}>
-            <h1 className="pt-5 text-center">Insight IQ</h1>
-            <br />
-            <h2 className="text-center">
-                Get Started!
-            </h2>
-            <Container>
-                <h3 className="mt-5 fs-5 text-center">Features of this App</h3>
-                <Row className="fs-6">
-                    <Col md={4}>
-                        <Card
-                            body
-                            className="my-2 background2"
-                        >
-                            <CardText>
-                                Allow users to search for answers to their questions using relevant keywords or phrases.
-                            </CardText>
-                        </Card>
-                        <Card
-                            body
-                            className="my-2 background2"
-                        >
-                            <CardText>
-                                Enable users to create accounts and save their questions, answers, and preferences for future reference.
-                            </CardText>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        <Card
-                            body
-                            className="my-2 background2"
-                        >
-                            <CardText>
-                                Use machine learning algorithms to recommend answers to users based on their preferences, and behavior on the platform.
-                            </CardText>
-                        </Card>
-                        <Card
-                            body
-                            className="my-2 background2"
-                        >
-                            <CardText>
-                                Ensure the app is fully responsive and optimized for mobile devices, so users can access it from anywhere at any time.
-                            </CardText>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        <Card
-                            body
-                            className="my-2 background2"
-                        >
-                            <CardText>
-                                Allow users to search and submit questions and answers in multiple languages.
-                            </CardText>
-                        </Card>
-                        <Card
-                            body
-                            className="my-2 background2"
-                        >
-                            <CardText>
-                                Use machine translation to automatically translate questions and answers between languages, based on user preferences.
-                            </CardText>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
+        window.addEventListener("resize", handleResize);
 
-        </Container>
-    );
+    }, []);
 
     return (
         <>
+            <MyNavbar setNavHeight={setNavHeight} />
+
+            {
+                isMobile ? (
+                    <>
+                        <Button onClick={handleToggle} className="offcanvasToggleBtn">
+                            <FontAwesomeIcon icon={faBars} />
+                        </Button>
+
+                        <OffcanvasDashboard className="Dashboardbackground" isOpen={isOpen} toggle={handleToggle} showLogoutAlert={handleLogoutShowAlert} setIsCookieExpired={setIsCookieExpired} />
+
+                        {
+                            qaList.length === 0 ?
+
+                                <QAViewWindow remHeight={remHeight} navHeight={navHeight} />
+
+                                :
+
+                                <QAList listRef={listRef} remHeight={remHeight} qaList={qaList} scrollToBottom={scrollToBottom} visible={visible} navHeight={navHeight} />
+                        }
+
+                        <QuestionForm formRef={formRef} handleShowAlert={handleShowAlert} onChangeInputHandler={onChangeInputHandler} question={question} questionSubmitHandler={questionSubmitHandler} />
+                    </>
+                ) :
+                    (
+                        <Container fluid>
+
+
+                            <Row>
+                                <Col lg={3} md={4} sm={4} className="Dashboardbackground">
+                                    <UserDashboard showLogoutAlert={handleLogoutShowAlert} setIsCookieExpired={setIsCookieExpired} />
+                                </Col>
+                                <Col lg={9} md={8} sm={8} className="background1">
+                                    {
+                                        qaList.length === 0 ?
+
+                                            <QAViewWindow remHeight={remHeight} navHeight={navHeight} />
+
+                                            :
+
+                                            <QAList listRef={listRef} remHeight={remHeight} qaList={qaList} scrollToBottom={scrollToBottom} visible={visible} navHeight={navHeight} />
+                                    }
+
+                                    <QuestionForm formRef={formRef} handleShowAlert={handleShowAlert} onChangeInputHandler={onChangeInputHandler} question={question} questionSubmitHandler={questionSubmitHandler} />
+
+                                </Col>
+                            </Row>
+                        </Container>
+                    )
+            }
+
             <SweetAlert
                 warning
                 showCancel
@@ -326,116 +390,22 @@ const InsightIQ = () => {
                 Are you sure you want to delete all your conversations?
             </SweetAlert>
 
-            {
-                isMobile ? (
-                    <>
-                        <Button onClick={handleToggle} className="offcanvasToggleBtn">
-                            <FontAwesomeIcon icon={faBars}/>
-                        </Button>
-
-                        <OffcanvasDashboard className="Dashboardbackground" isOpen={isOpen} toggle={handleToggle} logout={logout} />
-
-                        {
-                            qaList.length === 0 ?
-
-                                <QAViewWindow remHeight={remHeight} />
-
-                                :
-
-                                (<div ref={listRef} id="qa" className="background1 text-white pt-4"
-                                    style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto', scrollBehavior: 'smooth' }}>
-
-                                    {qaList.map((qa) => <div key={qa.q_id}> <p className="background3 p-4 mx-4 questionDiv">Q: {qa.question}</p> <p className="background2 p-4 mx-4 fst-italic answerDiv">A: {qa.answer}</p></div>)}
-                                    <Button color="primary" className="scrollDownBtn" onClick={scrollToBottom}
-                                        style={{ display: visible ? 'inline' : 'none' }}>
-                                        <FontAwesomeIcon icon={faArrowDown} />
-                                    </Button>
-                                </div>)
-                        }
-
-                        <div ref={formRef} className="p-3 background1">
-                            <Form onSubmit={questionSubmitHandler}>
-                                <Container>
-
-                                    <InputGroup>
-                                        <Input
-                                            autoComplete="off"
-                                            id="question"
-                                            name="question"
-                                            className="background2 QuestionInput"
-                                            placeholder="Have a Question? Type Here!!"
-                                            value={question}
-                                            onChange={event => setQuestion(event.target.value)}
-                                        />
-                                        <InputGroupText className="background2 QuestionInput">
-                                            <Button color="primary" type="submit" className="sendBtn"><FontAwesomeIcon icon={faPaperPlane} /></Button>
-                                        </InputGroupText>
-
-                                        <InputGroupText className="background1">
-                                            <Button color="primary" type="reset" className="dltBtn" onClick={handleShowAlert}><FontAwesomeIcon icon={faTrash} /></Button>
-                                        </InputGroupText>
-                                    </InputGroup>
-                                </Container>
-
-                            </Form>
-                        </div>
-                    </>
-                ) :
-                    (
-                        <Row>
-                            <Col lg={3} md={4} sm={4} className="Dashboardbackground">
-                                <UserDashboard logout={logout} />
-                            </Col>
-                            <Col lg={9} md={8} sm={8} className="background1">
-                                {
-                                    qaList.length === 0 ?
-
-                                        <QAViewWindow remHeight={remHeight} />
-
-                                        :
-
-                                        (<div ref={listRef} id="qa" className="background1 text-white pt-4"
-                                            style={{ height: `calc(90.67vh - ${remHeight}px)`, overflowY: 'auto', scrollBehavior: 'smooth' }}>
-
-                                            {qaList.map((qa) => <div key={qa.q_id}> <p className="background3 p-4 mx-4 questionDiv">Q: {qa.question}</p> <p className="background2 p-4 mx-4 fst-italic answerDiv">A: {qa.answer}</p></div>)}
-                                            <Button color="primary" className="scrollDownBtn" onClick={scrollToBottom}
-                                                style={{ display: visible ? 'inline' : 'none' }}>
-                                                <FontAwesomeIcon icon={faArrowDown} />
-                                            </Button>
-                                        </div>)
-                                }
-
-                                <div ref={formRef} className="p-3 background1">
-                                    <Form onSubmit={questionSubmitHandler}>
-                                        <Container>
-
-                                            <InputGroup>
-                                                <Input
-                                                    autoComplete="off"
-                                                    id="question"
-                                                    name="question"
-                                                    className="background2 QuestionInput"
-                                                    placeholder="Have a Question? Type Here!!"
-                                                    value={question}
-                                                    onChange={event => setQuestion(event.target.value)}
-                                                />
-                                                <InputGroupText className="background2 QuestionInput">
-                                                    <Button color="primary" type="submit" className="sendBtn"><FontAwesomeIcon icon={faPaperPlane} /></Button>
-                                                </InputGroupText>
-
-                                                <InputGroupText className="background1">
-                                                    <Button color="primary" type="reset" className="dltBtn" onClick={handleShowAlert}><FontAwesomeIcon icon={faTrash} /></Button>
-                                                </InputGroupText>
-                                            </InputGroup>
-                                        </Container>
-
-                                    </Form>
-                                </div>
-                            </Col>
-                        </Row>
-                    )
-            }
-
+            <SweetAlert
+                warning
+                showCancel
+                show={showLogoutAlert}
+                confirmBtnText="Yes"
+                confirmBtnBsStyle="danger"
+                title="Are you sure?"
+                onConfirm={handleLogoutConfirmAlert}
+                onCancel={handleLogoutHideAlert}
+                focusCancelBtn
+                cancelBtnBsStyle="success"
+                customClass="DltSure"
+                style={{ backgroundColor: '#343541', color: 'white' }}
+            >
+                Do you want to Logout?
+            </SweetAlert>
 
         </>
     );

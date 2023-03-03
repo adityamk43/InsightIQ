@@ -7,6 +7,7 @@ import {
     CarouselCaption,
 } from "reactstrap";
 import Footer from "../Footer/Footer";
+import MyNavbar from "../Navbar/Navbar";
 import './About.css';
 
 const About = () => {
@@ -59,13 +60,13 @@ const About = () => {
 
     const slides = items.map((item) => {
         return (
-            <CarouselItem 
+            <CarouselItem
                 className="carousel-div"
                 onExiting={() => setAnimating(true)}
                 onExited={() => setAnimating(false)}
                 key={item.src}
             >
-                <img src={item.src} alt={item.altText} className="d-block w-100 slider-image"/>
+                <img src={item.src} alt={item.altText} className="d-block w-100 slider-image" />
                 <CarouselCaption
                     captionText={item.altText}
                     captionHeader={item.caption}
@@ -76,7 +77,7 @@ const About = () => {
 
     return (
         <>
-
+            <MyNavbar />
             <Carousel
                 activeIndex={activeIndex}
                 next={next}
@@ -105,10 +106,10 @@ const About = () => {
                 className="fs-5 mt-5"
                 style={{ minHeight: "66.5vh", fontFamily: 'monospace', fontStyle: 'italic' }}
             >
-                
+
                 I am a 4th Year B. Tech Computer
                 Science Student studying in Amity University. I have learned various skills that are required in
-                web development. 
+                web development.
                 These slides were showing some of my skills that I hone but I am not limited to these skills only ;&#41;. I have developed many projects using java, django, nodejs in backend and reactjs, angular and bootstrap in frontend. I have a experience as a Web
                 Developer Intern in Burgwalden, Germany where I have worked as a SpringBoot Java backend Developer. Currently, I am focusing on learning new skills and experience and problem solving skills through DSA.
 

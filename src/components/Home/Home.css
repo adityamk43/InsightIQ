@@ -39,11 +39,11 @@
 
 .fonts h1 {
     font-weight: 100;
-    font-size: 5rem;
+    /* font-size: 5rem; */
 }
 
 .fonts p {
 
-    font-size: 2rem;
+    /* font-size: 2rem; */
     font-style: italic;
 }
