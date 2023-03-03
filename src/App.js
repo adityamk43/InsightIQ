@@ -10,6 +10,9 @@ import Login from './components/Auth/Login/Login';
 import Auth from './components/Auth/Auth';
 import ProtectedRoute from './components/Util/ProtectedRoute';
 import ChangePassword from './components/ChangePassword/ChangePassword';
+import ResetPassword from './components/ResetPassword/ResetPassword';
+import ResetEmailForm from './components/ResetPassword/ResetEmailForm';
+import NotFound from './components/NotFound/NotFound';
 
 function App() {
   return (
@@ -26,7 +29,7 @@ function App() {
 
           <Route path='/insight-iq/*' element={
             <ProtectedRoute>
-              
+
               <Routes>
                 <Route path='/' element={<InsightIQ />} />
               </Routes>
@@ -35,6 +38,11 @@ function App() {
               </Routes>
             </ProtectedRoute>
           } />
+
+          <Route path='/reset-password' element={<ResetEmailForm />} />
+          <Route path='/api/user/reset/:uid/:token' element={<ResetPassword />} />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
       <ToastContainer />

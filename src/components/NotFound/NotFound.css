@@ -1,0 +1,31 @@
+.NotFound {
+    margin: 0;
+    padding: 0;
+    background-image: linear-gradient(to top, #2c2d34, #33343a, #3a3b40, #414247, #48494d, #46474b, #45464a, #434448, #38393e, #2e2f35, #24252c, #1b1b23);
+    height: 100vh;
+    width: 100vw;
+    font-family: 'Courier New', Courier, monospace;
+    color: #fff;
+    text-align: center;
+}
+
+.GoHome {
+    background-color: darkcyan !important;
+    color: white !important;
+    border-color: darkcyan !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+.GoHome:hover {
+    background-color: rgb(8, 88, 88) !important;
+    border-color: rgb(8, 88, 88) !important;
+}
+
+.GoHome:active {
+    background-color: rgb(36, 122, 122) !important;
+    border-color: rgb(36, 122, 122) !important;
+    border: 1px solid transparent !important;
+    box-shadow: 0 0 10px rgb(21, 23, 23) !important;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}

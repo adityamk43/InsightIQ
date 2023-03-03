@@ -141,9 +141,15 @@ const Login = () => {
                                                     onChange={handleOnChange}
                                                     value={formData.password}
                                                 />
+                                                <Container className="text-end py-3">
+                                                    <Link to="/reset-password">
+                                                        Forgot Password?
+                                                    </Link>
+                                                </Container>
                                             </FormGroup>
 
                                             <Container className="text-center pt-5 pb-3">
+
                                                 <Button className="submitBtn" type="submit">
                                                     Login
                                                 </Button>
