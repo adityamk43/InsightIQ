@@ -331,7 +331,7 @@ const InsightIQ = () => {
                             <FontAwesomeIcon icon={faBars} />
                         </Button>
 
-                        <OffcanvasDashboard className="Dashboardbackground" isOpen={isOpen} toggle={handleToggle} showLogoutAlert={handleLogoutShowAlert} setIsCookieExpired={setIsCookieExpired} />
+                        <OffcanvasDashboard className="Dashboardbackground" isOpen={isOpen} toggle={handleToggle} showLogoutAlert={handleLogoutShowAlert} setIsCookieExpired={setIsCookieExpired} handleShowAlert={handleShowAlert} />
 
                         {
                             qaList.length === 0 ?
@@ -352,7 +352,7 @@ const InsightIQ = () => {
 
                             <Row>
                                 <Col lg={3} md={4} sm={4} className="Dashboardbackground">
-                                    <UserDashboard showLogoutAlert={handleLogoutShowAlert} setIsCookieExpired={setIsCookieExpired} />
+                                    <UserDashboard showLogoutAlert={handleLogoutShowAlert} setIsCookieExpired={setIsCookieExpired} handleShowAlert={handleShowAlert} />
                                 </Col>
                                 <Col lg={9} md={8} sm={8} className="background1">
                                     {
@@ -365,7 +365,7 @@ const InsightIQ = () => {
                                             <QAList listRef={listRef} remHeight={remHeight} qaList={qaList} scrollToBottom={scrollToBottom} visible={visible} navHeight={navHeight} />
                                     }
 
-                                    <QuestionForm formRef={formRef} handleShowAlert={handleShowAlert} onChangeInputHandler={onChangeInputHandler} question={question} questionSubmitHandler={questionSubmitHandler} />
+                                    <QuestionForm formRef={formRef} /*handleShowAlert={handleShowAlert}*/ onChangeInputHandler={onChangeInputHandler} question={question} questionSubmitHandler={questionSubmitHandler}  />
 
                                 </Col>
                             </Row>

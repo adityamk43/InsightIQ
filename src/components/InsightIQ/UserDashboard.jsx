@@ -1,4 +1,4 @@
-import { faArrowRightFromBracket, faEnvelope, faUser, faUserLock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faEnvelope, faTrashCan, faUser, faUserLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { ListGroup, ListGroupItem } from "reactstrap";
@@ -8,7 +8,7 @@ import Cookies from 'js-cookie'
 import BASE_URL from "../../api/env";
 import { Link } from "react-router-dom";
 
-const UserDashboard = ({ showLogoutAlert, setIsCookieExpired }) => {
+const UserDashboard = ({ showLogoutAlert, setIsCookieExpired, handleShowAlert }) => {
     const [userData, setUserData] = useState({ id: "", email: "", name: "" })
 
     const getUserData = async () => {
@@ -30,14 +30,13 @@ const UserDashboard = ({ showLogoutAlert, setIsCookieExpired }) => {
 
     useEffect(() => {
 
-        if (Cookies.get('accessToken')==null && Cookies.get('refreshToken')==null)
-        {
+        if (Cookies.get('accessToken') == null && Cookies.get('refreshToken') == null) {
             setIsCookieExpired(true);
         }
         else
             getUserData();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
@@ -53,6 +52,9 @@ const UserDashboard = ({ showLogoutAlert, setIsCookieExpired }) => {
                 <Link to={"/insight-iq/change-password"} className='border-0 rounded-0 text-white my-3 list-group-item list-group-item-action DashboardListColor'>
                     <FontAwesomeIcon icon={faUserLock} />&nbsp;&nbsp;ChangePassword
                 </Link>
+                <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={handleShowAlert}>
+                    <FontAwesomeIcon icon={faTrashCan} />&nbsp;&nbsp;Delete Conversation
+                </ListGroupItem>
                 <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={showLogoutAlert}>
                     <FontAwesomeIcon icon={faArrowRightFromBracket} />&nbsp;&nbsp;Logout
                 </ListGroupItem>

@@ -1,4 +1,4 @@
-import { faArrowRightFromBracket, faEnvelope, faTimes, faUser, faUserLock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faEnvelope, faTimes, faTrashCan, faUser, faUserLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -8,7 +8,7 @@ import { ListGroup, ListGroupItem, Offcanvas, OffcanvasBody } from "reactstrap";
 import BASE_URL from "../../api/env";
 import './UserDashboard.css';
 
-const OffcanvasDashboard = ({ className, isOpen, toggle, showLogoutAlert, setIsCookieExpired }) => {
+const OffcanvasDashboard = ({ className, isOpen, toggle, showLogoutAlert, setIsCookieExpired, handleShowAlert }) => {
 
     const [userData, setUserData] = useState({ id: "", email: "", name: "" })
 
@@ -61,7 +61,10 @@ const OffcanvasDashboard = ({ className, isOpen, toggle, showLogoutAlert, setIsC
                             <Link to={"/insight-iq/change-password"} className='border-0 rounded-0 text-white my-3 list-group-item list-group-item-action DashboardListColor'>
                                 <FontAwesomeIcon icon={faUserLock} />&nbsp;&nbsp;ChangePassword
                             </Link>
-                            <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={showLogoutAlert}>
+                            <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={() => { handleShowAlert(); toggle(); }}>
+                                <FontAwesomeIcon icon={faTrashCan} />&nbsp;&nbsp;Delete Conversation
+                            </ListGroupItem>
+                            <ListGroupItem className='border-0 rounded-0 text-white my-3 DashboardListColor' onClick={() => {showLogoutAlert(); toggle();}}>
                                 <FontAwesomeIcon icon={faArrowRightFromBracket} />&nbsp;&nbsp;Logout
                             </ListGroupItem>
                         </ListGroup>

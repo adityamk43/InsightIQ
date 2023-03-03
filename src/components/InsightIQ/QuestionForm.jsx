@@ -1,4 +1,4 @@
-import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Button, Container, Form, Input, InputGroup, InputGroupText } from "reactstrap";
@@ -24,9 +24,9 @@ const QuestionForm = ({formRef, questionSubmitHandler, question, onChangeInputHa
                             <Button color="primary" type="submit" className="sendBtn"><FontAwesomeIcon icon={faPaperPlane} /></Button>
                         </InputGroupText>
 
-                        <InputGroupText className="background1">
+                        {/* <InputGroupText className="background1">
                             <Button color="primary" type="reset" className="dltBtn" onClick={handleShowAlert}><FontAwesomeIcon icon={faTrash} /></Button>
-                        </InputGroupText>
+                        </InputGroupText> */}
                     </InputGroup>
                 </Container>
 
