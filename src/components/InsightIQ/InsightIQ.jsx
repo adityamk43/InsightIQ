@@ -111,7 +111,7 @@ const InsightIQ = () => {
             },
         })
             .then(response => {
-                console.log(response.data);
+                // console.log(response.data);
                 toast.success('Conversation has been deleted successfully!', {
                     position: "top-right",
                     autoClose: 5000,
@@ -169,7 +169,7 @@ const InsightIQ = () => {
             },
         })
             .then(response => {
-                console.log(response.data);
+                // console.log(response.data);
                 //To debug and test working in front-end only, use these commented variables!!
                 // const answer = "Hello This is a Dev Answer.";
                 // const dbObject = { q_id: index, question: question, answer: answer };

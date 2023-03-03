@@ -21,7 +21,7 @@ const Register = () => {
     const doRegister = async () => {
         await axios.post(`${BASE_URL}/user/register/`, formData)
             .then(response => {
-                console.log(response.data);
+                // console.log(response.data);
                 const token = response.data.token
                 const access_token = token.access;
                 const refresh_token = token.refresh;
@@ -65,7 +65,7 @@ const Register = () => {
             })
             .catch(errors => {
                 const errorData = errors.response.data.errors.email[0]
-                console.log(errorData);
+                // console.log(errorData);
                 toast.error(<div>Login Unsuccesful! <br /> {errorData}</div>, {
                     position: "top-right",
                     autoClose: 5000,
@@ -81,7 +81,7 @@ const Register = () => {
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
-        console.log(formData);
+        // console.log(formData);
 
         if (formData.email === '' || formData.name === '' || formData.password === '' || formData.password2 === '') {
             toast.warn("Fill all the Fields correctly!!", {
