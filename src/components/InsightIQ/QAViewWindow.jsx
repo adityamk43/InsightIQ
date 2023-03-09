@@ -6,7 +6,7 @@ const QAViewWindow = ({ remHeight, navHeight }) => {
 
     return (
         <Container fluid className="background1 text-white qaContainer"
-            style={{ height: `calc(100vh - ${remHeight}px - ${navHeight}px)`, overflowY: 'auto' }}>
+            style={{ height: `calc(100dvh - ${remHeight}px - ${navHeight}px)`, overflowY: 'auto' }}>
             <h1 className="pt-5 text-center">Insight IQ</h1>
             <br />
             <h2 className="text-center">
